@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Libro interactivo</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#2b0b4a,#5e1a9a,#3b0f7a);
+}
+
+/* CONTENEDOR LIBRO */
+.scene{width:420px}
+
+.book{
+position:relative;
+width:100%;
+height:600px;
+perspective:2000px;
+}
+
+/* PORTADA */
+.cover{
+position:absolute;
+width:100%;
+height:100%;
+transform-origin:left;
+transition:transform 1.2s;
+box-shadow:0 20px 40px rgba(0,0,0,.5);
+cursor:pointer;
+z-index:3;
+}
+.cover img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:10px;
+}
+.book.open .cover{
+transform:rotateY(-175deg);
+}
+
+/* PAGINAS */
+.pages{
+position:absolute;
+width:100%;
+height:100%;
+background:#fff;
+border-radius:10px;
+box-shadow:0 20px 40px rgba(0,0,0,.4);
+opacity:0;
+transition:opacity .8s .5s;
+overflow:hidden;
+}
+.book.open .pages{opacity:1}
+
+.pageContent img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* BOTONES FUERA */
+.controls{
+margin-top:25px;
+display:flex;
+gap:50px;
+opacity:0;
+pointer-events:none;
+transition:.5s;
+}
+
+.controls.visible{
+opacity:1;
+pointer-events:auto;
+}
+
+.controls img{
+width:90px;
+cursor:pointer;
+transition:.2s;
+}
+.controls img:hover{transform:scale(1.1)}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+  <div class="book" id="book">
+    <div class="cover" id="cover">
+      <img src="img/portada.png">
+    </div>
+
+    <div class="pages">
+      <div class="pageContent" id="pageContent">
+        <img src="img/pagina1.png">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTONES -->
+<div class="controls" id="controls">
+  <img src="img/boton-anterior.png" id="prevPage">
+  <img src="img/boton-siguiente.png" id="nextPage">
+</div>
+
+<script>
+const book=document.getElementById('book');
+const cover=document.getElementById('cover');
+const controls=document.getElementById('controls');
+const pageContent=document.getElementById('pageContent');
+const nextBtn=document.getElementById('nextPage');
+const prevBtn=document.getElementById('prevPage');
+
+let currentPage=0;
+
+const pages=[
+"img/pagina1.png",
+"img/pagina2.png",
+"img/pagina3.png"
+];
+
+cover.onclick=()=>{
+  book.classList.toggle('open');
+  controls.classList.toggle('visible'); // 🔥 mostrar botones al abrir
+}
+
+function updateButtons(){
+  prevBtn.style.visibility = currentPage===0 ? 'hidden':'visible';
+  nextBtn.style.visibility = currentPage===2 ? 'hidden':'visible';
+}
+
+function changePage(newPage){
+  currentPage=newPage;
+  pageContent.innerHTML=`<img src="${pages[currentPage]}">`;
+  updateButtons();
+}
+
+nextBtn.onclick=()=>{ if(currentPage<2) changePage(currentPage+1); }
+prevBtn.onclick=()=>{ if(currentPage>0) changePage(currentPage-1); }
+
+updateButtons();
+</script>
+
+</body>
+</html>
